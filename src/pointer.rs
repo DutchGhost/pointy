@@ -5,12 +5,12 @@ use crate::{
 };
 
 use core::{
-    cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering},
+    cmp::{Eq, Ord, Ordering, PartialEq, PartialOrd},
+    hash::{Hash, Hasher},
     marker::PhantomData,
     mem,
     ops::{Deref, DerefMut},
     slice,
-    hash::{Hasher, Hash},
 };
 
 /// A pointer to any type T.
@@ -38,8 +38,8 @@ pub struct Ptr<
     lifetime: PhantomData<&'a ()>,
 }
 
-unsafe impl <'a, T: ?Sized + Pointee + Send, A: Access> Send for Ptr<'a, T, T::Meta, A> {}
-unsafe impl <'a, T: ?Sized + Pointee + Sync, A: Access> Sync for Ptr<'a, T, T::Meta, A> {}
+unsafe impl<'a, T: ?Sized + Pointee + Send, A: Access> Send for Ptr<'a, T, T::Meta, A> {}
+unsafe impl<'a, T: ?Sized + Pointee + Sync, A: Access> Sync for Ptr<'a, T, T::Meta, A> {}
 
 /// if `A` Copy, the pointer is Copy.
 impl<'a, T: ?Sized + Pointee, A: Access + Copy> Copy for Ptr<'a, T, T::Meta, A> {}
@@ -70,13 +70,15 @@ impl<'a, T: ?Sized + Pointee, A: Access> Ord for Ptr<'a, T, T::Meta, A> {
     }
 }
 
-impl <'a, 'b, T: ?Sized + Pointee, A: Access, B: Access> PartialOrd<Ptr<'b, T, T::Meta, B>> for Ptr<'a, T, T::Meta, A> {
+impl<'a, 'b, T: ?Sized + Pointee, A: Access, B: Access> PartialOrd<Ptr<'b, T, T::Meta, B>>
+    for Ptr<'a, T, T::Meta, A>
+{
     fn partial_cmp(&self, other: &Ptr<'b, T, T::Meta, B>) -> Option<Ordering> {
         self.location.partial_cmp(&other.location)
     }
 }
 
-impl <'a, T: ?Sized + Pointee, A: Access> Hash for Ptr<'a, T, T::Meta, A> {
+impl<'a, T: ?Sized + Pointee, A: Access> Hash for Ptr<'a, T, T::Meta, A> {
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.location.hash(state);
