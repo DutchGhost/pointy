@@ -84,6 +84,7 @@ impl<'a, T: ?Sized + Pointee, A: Access> Hash for Ptr<'a, T, T::Meta, A> {
         self.location.hash(state);
     }
 }
+
 impl<'a, T: ?Sized + Pointee, A: Access> Ptr<'a, T, T::Meta, A> {
     /// Constructs a new `Ptr` from `pointer`.
     #[inline]
@@ -92,6 +93,26 @@ impl<'a, T: ?Sized + Pointee, A: Access> Ptr<'a, T, T::Meta, A> {
         Self: From<P>,
     {
         Self::from(pointer)
+    }
+
+    /// Returns the metadata this pointer carries.
+    #[inline]
+    pub fn metadata(&self) -> T::Meta {
+        self.meta
+    }
+}
+
+impl <'a, T: ?Sized + Pointee, A: Access> Ptr<'a, T, T::Meta, A> {
+    /// Transforms a pointer with Unique access to a pointer with Shared access.
+    #[inline]
+    pub fn into_shared(self) -> Ptr<'a, T, T::Meta, Shared> {
+        Ptr {
+            location: self.location,
+            meta: self.meta,
+            access: PhantomData,
+            _mark: PhantomData,
+            lifetime: PhantomData,
+        }
     }
 }
 

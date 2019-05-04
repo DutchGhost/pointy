@@ -13,19 +13,19 @@ pub struct TraitObject {
 impl TraitObject {
     /// Creates a new TraitObject from `data` and `vtable`.
     #[inline]
-    pub unsafe fn new(data: *mut (), vtable: *mut ()) -> Self {
+    pub const unsafe fn new(data: *mut (), vtable: *mut ()) -> Self {
         Self { data, vtable }
     }
 
     /// Returns the data part of the trait object.
     #[inline]
-    pub unsafe fn data(&self) -> *mut () {
+    pub const unsafe fn data(&self) -> *mut () {
         self.data
     }
 
     /// Returns the vtable part of the trait object.
     #[inline]
-    pub unsafe fn vtable(&self) -> *mut () {
+    pub const unsafe fn vtable(&self) -> *mut () {
         self.vtable
     }
 }
