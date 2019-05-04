@@ -198,7 +198,7 @@ impl<'a, T: ?Sized + Pointee<Meta = VTablePointer>> DerefMut for Ptr<'a, T, VTab
     }
 }
 
-/// A pointer to a slic (Meta = usize) is dereferencable for any access specifier `A`.
+/// A pointer to a slice (Meta = usize) is dereferencable for any access specifier `A`.
 impl<'a, T, A: Access> Deref for Ptr<'a, [T], <[T] as Pointee>::Meta, A> {
     type Target = [T];
 
@@ -209,7 +209,7 @@ impl<'a, T, A: Access> Deref for Ptr<'a, [T], <[T] as Pointee>::Meta, A> {
     }
 }
 
-/// A pointer to a trait object (Meta = usize) is only mutably dereferencable by Unique access.
+/// A pointer to a slice (Meta = usize) is only mutably dereferencable by Unique access.
 impl<'a, T> DerefMut for Ptr<'a, [T], <[T] as Pointee>::Meta, Unique> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
